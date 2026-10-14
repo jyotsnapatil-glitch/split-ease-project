@@ -1,0 +1,18 @@
+# Render Blueprint for the backend. MySQL is NOT provided by Render: use an external managed MySQL (Aiven, TiDB Cloud, AWS RDS).
+services:
+  - type: web
+    name: splitease-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /actuator/health
+    envVars:
+      - { key: DB_URL, sync: false }          # jdbc:mysql://HOST:PORT/DB?sslMode=REQUIRED&serverTimezone=UTC
+      - { key: DB_USERNAME, sync: false }
+      - { key: DB_PASSWORD, sync: false }
+      - { key: JWT_SECRET, generateValue: true }
+      - { key: CORS_ALLOWED_ORIGINS, sync: false }   # https://your-app.vercel.app
+      - { key: COOKIE_SECURE, value: "true" }
+      - { key: COOKIE_SAMESITE, value: Lax }   # Lax when using the Vercel /api rewrite (first-party cookie); None only if calling the API cross-site
+      - { key: ADMIN_EMAIL, sync: false }
+      - { key: ADMIN_PASSWORD, sync: false }
